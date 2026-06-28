@@ -192,6 +192,11 @@ html,body{height:100%;background:var(--ink);color:var(--paper);font-family:"DM S
 .success-title em{font-style:italic;color:var(--gold)}
 .success-desc{font-size:13px;color:var(--fog);line-height:1.8;max-width:340px;font-weight:300;margin-bottom:32px}
 .success-sig{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:var(--mist)}
+
+.rank-img{width:48px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--smoke)}
+.rank-check{width:24px;height:24px;border-radius:50%;background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--fog);flex-shrink:0;transition:all .15s}
+.rank-item.selected .rank-check{background:var(--gold);color:var(--ink)}
+.rank-item.selected .rank-img{box-shadow:0 0 0 2px var(--gold)}
 </style>
 </head>
 <body>
@@ -276,14 +281,14 @@ var questions = [
     min:1,
     max:3,
     options:[
-      {emoji:"🥩",label:"Carne vermelha"},
-      {emoji:"🐑",label:"Cordeiro"},
-      {emoji:"🐖",label:"Suíno"},
-      {emoji:"🦌",label:"Caça (javali, codorna)"},
-      {emoji:"🍗",label:"Frango e aves"},
-      {emoji:"🐟",label:"Peixe"},
-      {emoji:"🦐",label:"Frutos do mar"},
-      {emoji:"🌱",label:"Vegetariano / sem proteína animal"}
+      {img:"imagens/proteinas/01_carne.jpg",label:"Carne vermelha"},
+      {img:"imagens/proteinas/02_cordeiro.jpg",label:"Cordeiro"},
+      {img:"imagens/proteinas/03_suino.jpg",label:"Suíno"},
+      {img:"imagens/proteinas/04_caca.jpg",label:"Caça (javali, codorna)"},
+      {img:"imagens/proteinas/05_frango.jpg",label:"Frango e aves"},
+      {img:"imagens/proteinas/06_peixe.jpg",label:"Peixe"},
+      {img:"imagens/proteinas/07_frutosdomar.jpg",label:"Frutos do mar"},
+      {img:"imagens/proteinas/08_vegetariano.jpg",label:"Vegetariano / sem proteína animal"}
     ]
   },
   {
@@ -296,13 +301,13 @@ var questions = [
     min:1,
     max:3,
     options:[
-      {emoji:"🍝",label:"Massas"},
-      {emoji:"🥟",label:"Nhoque"},
-      {emoji:"🍚",label:"Risoto"},
-      {emoji:"🍙",label:"Arroz (em todas as formas)"},
-      {emoji:"🥔",label:"Batata (purê, gratin, rústica)"},
-      {emoji:"🍞",label:"Pães e fermentados"},
-      {emoji:"🥗",label:"Baixo-carb / sem carboidrato"}
+      {img:"imagens/bases/09_massa.jpg",label:"Massas"},
+      {img:"imagens/bases/10_nhoque.jpg",label:"Nhoque"},
+      {img:"imagens/bases/11_risoto.jpg",label:"Risoto"},
+      {img:"imagens/bases/12_arroz.jpg",label:"Arroz (em todas as formas)"},
+      {img:"imagens/bases/13_batata.jpg",label:"Batata (purê, gratin, rústica)"},
+      {img:"imagens/bases/14_paes.jpg",label:"Pães e fermentados"},
+      {img:"imagens/bases/15_baixocarb.jpg",label:"Baixo-carb / sem carboidrato"}
     ]
   },
   {
@@ -315,14 +320,14 @@ var questions = [
     min:1,
     max:3,
     options:[
-      {emoji:"🇮🇹",label:"Italiana"},
-      {emoji:"🇫🇷",label:"Francesa"},
-      {emoji:"🇧🇷",label:"Brasileira regional"},
-      {emoji:"🥢",label:"Asiática"},
-      {emoji:"🫒",label:"Mediterrânea"},
-      {emoji:"🌮",label:"Latino-americana"},
-      {emoji:"✨",label:"Contemporânea / fusion"},
-      {emoji:"🍲",label:"Caseira / comfort food"}
+      {img:"imagens/estilos/16_italiana.jpg",label:"Italiana"},
+      {img:"imagens/estilos/17_francesa.jpg",label:"Francesa"},
+      {img:"imagens/estilos/18_brasileira.jpg",label:"Brasileira regional"},
+      {img:"imagens/estilos/19_asiatica.jpg",label:"Asiática"},
+      {img:"imagens/estilos/20_mediterranea.jpg",label:"Mediterrânea"},
+      {img:"imagens/estilos/21_latinoamericana.jpg",label:"Latino-americana"},
+      {img:"imagens/estilos/22_contemporanea.jpg",label:"Contemporânea / fusion"},
+      {img:"imagens/estilos/23_caseira.jpg",label:"Caseira / comfort food"}
     ]
   },
   {
@@ -335,13 +340,13 @@ var questions = [
     min:1,
     max:3,
     options:[
-      {emoji:"🍫",label:"Chocolate"},
-      {emoji:"🍓",label:"Frutas"},
-      {emoji:"🍮",label:"Cremosos (mousse, brûlée, panna cotta)"},
-      {emoji:"🍋",label:"Cítricos"},
-      {emoji:"🍯",label:"Clássicos brasileiros (brigadeiro, doce de leite)"},
-      {emoji:"🍨",label:"Sorvetes e gelados"},
-      {emoji:"🧀",label:"Queijos como sobremesa"}
+      {img:"imagens/sobremesas/24_chocolate.jpg",label:"Chocolate"},
+      {img:"imagens/sobremesas/25_frutas.jpg",label:"Frutas"},
+      {img:"imagens/sobremesas/26_cremosos.jpg",label:"Cremosos (mousse, brûlée, panna cotta)"},
+      {img:"imagens/sobremesas/27_citricos.jpg",label:"Cítricos"},
+      {img:"imagens/sobremesas/28_brasileiros.jpg",label:"Clássicos brasileiros (brigadeiro, doce de leite)"},
+      {img:"imagens/sobremesas/29_sorvetes.jpg",label:"Sorvetes e gelados"},
+      {img:"imagens/sobremesas/30_queijos.jpg",label:"Queijos como sobremesa"}
     ]
   },
   {
@@ -376,7 +381,15 @@ var questions = [
     title:"O que <em>acompanha</em> seu jantar?",
     instruction:"Toque em quantas opções fizerem sentido — sem ordem específica.",
     type:"multi",
-    options:["Vinho tinto","Vinho branco","Espumante","Cerveja artesanal","Drinks autorais","Sem álcool / sucos especiais","Surpreenda-me"]
+    options:[
+      {img:"imagens/harmonizacao/31_tinto.jpg",label:"Vinho tinto"},
+      {img:"imagens/harmonizacao/32_branco.jpg",label:"Vinho branco"},
+      {img:"imagens/harmonizacao/33_espumante.jpg",label:"Espumante"},
+      {img:"imagens/harmonizacao/34_cerveja.jpg",label:"Cerveja artesanal"},
+      {img:"imagens/harmonizacao/35_drinks.jpg",label:"Drinks autorais"},
+      {img:"imagens/harmonizacao/36_semalcool.jpg",label:"Sem álcool / sucos especiais"},
+      {img:"imagens/harmonizacao/37_surpreenda.jpg",label:"Surpreenda-me"}
+    ]
   },
   {
     id:"ocasioes",
@@ -441,20 +454,41 @@ function renderQuestion(){
       var rank=answers[q.id].indexOf(opt.label);
       var selected=rank>=0;
       var num=selected?(rank+1):"";
-      html+='<div class="rank-item'+(selected?" selected":"")+'" onclick="toggleRank(\''+q.id+'\',\''+opt.label.replace(/'/g,"\\'")+'\')">';
+      var safeLabel=opt.label.replace(/'/g,"\\'");
+      html+='<div class="rank-item'+(selected?" selected":"")+'" onclick="toggleRank(\''+q.id+'\',\''+safeLabel+'\')">';
       html+='<div class="rank-num">'+num+'</div>';
-      html+='<div class="rank-emoji">'+opt.emoji+'</div>';
+      if(opt.img){
+        html+='<img class="rank-img" src="'+opt.img+'" alt="" loading="lazy">';
+      }
       html+='<div class="rank-label">'+opt.label+'</div>';
       html+='</div>';
     });
     html+='</div>';
   } else if(q.type==="multi"){
-    html+='<div class="chips">';
-    q.options.forEach(function(opt){
-      var selected=answers[q.id].indexOf(opt)>=0;
-      html+='<div class="chip'+(selected?" selected":"")+'" onclick="toggleMulti(\''+q.id+'\',\''+opt.replace(/'/g,"\\'")+'\')">'+opt+'</div>';
-    });
-    html+='</div>';
+    // Suporta array de strings OU array de {img,label}
+    var hasImages = q.options.length>0 && typeof q.options[0]==="object";
+    if(hasImages){
+      html+='<div class="rank-list">';
+      q.options.forEach(function(opt){
+        var selected=answers[q.id].indexOf(opt.label)>=0;
+        var safeLabel=opt.label.replace(/'/g,"\\'");
+        html+='<div class="rank-item'+(selected?" selected":"")+'" onclick="toggleMulti(\''+q.id+'\',\''+safeLabel+'\')">';
+        html+='<div class="rank-check">'+(selected?"✓":"")+'</div>';
+        if(opt.img){
+          html+='<img class="rank-img" src="'+opt.img+'" alt="" loading="lazy">';
+        }
+        html+='<div class="rank-label">'+opt.label+'</div>';
+        html+='</div>';
+      });
+      html+='</div>';
+    } else {
+      html+='<div class="chips">';
+      q.options.forEach(function(opt){
+        var selected=answers[q.id].indexOf(opt)>=0;
+        html+='<div class="chip'+(selected?" selected":"")+'" onclick="toggleMulti(\''+q.id+'\',\''+opt.replace(/'/g,"\\'")+'\')">'+opt+'</div>';
+      });
+      html+='</div>';
+    }
   } else if(q.type==="single"){
     html+='<div class="cards">';
     q.options.forEach(function(opt){

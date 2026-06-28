@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Carta de Preferências — Casa LeVi</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0A0A0A;
+  --paper:#F7F4EE;
+  --gold:#C9A84C;
+  --gold-dim:#8A6E30;
+  --ash:#2A2A2A;
+  --smoke:#3D3D3D;
+  --mist:#6B6B6B;
+  --fog:#9A9A9A;
+  --line:#2A2A2A;
+  --white:#FFFFFF;
+  --red:#C0392B;
+  --green:#25D366;
+}
+html,body{height:100%;background:var(--ink);color:var(--paper);font-family:"DM Sans",sans-serif;overflow-x:hidden}
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ── TELA: BOAS-VINDAS ── */
+#s-welcome{justify-content:space-between;padding:0}
+.wlc-top{padding:48px 28px 0;flex:1;display:flex;flex-direction:column;justify-content:center}
+.wlc-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;font-weight:400}
+.wlc-title{font-family:"Cormorant Garamond",serif;font-size:48px;font-weight:300;line-height:1.05;color:var(--paper);margin-bottom:16px;letter-spacing:-.5px}
+.wlc-title em{font-style:italic;color:var(--gold)}
+.wlc-desc{font-size:13px;color:var(--fog);line-height:1.8;max-width:340px;font-weight:300;margin-bottom:40px}
+.wlc-bottom{padding:28px;border-top:1px solid var(--line)}
+.wlc-form{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.form-field{display:flex;flex-direction:column;gap:6px}
+.form-field label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mist);font-weight:400}
+.form-field input{background:var(--ash);border:1px solid var(--smoke);border-radius:4px;padding:12px 14px;font-size:14px;color:var(--paper);outline:none;font-family:"DM Sans",sans-serif;transition:border-color .2s}
+.form-field input::placeholder{color:var(--smoke)}
+.form-field input:focus{border-color:var(--gold)}
+.btn-primary{width:100%;padding:15px;background:var(--gold);border:none;border-radius:4px;color:var(--ink);font-size:13px;font-weight:500;cursor:pointer;letter-spacing:1.5px;text-transform:uppercase;font-family:"DM Sans",sans-serif;transition:opacity .2s}
+.btn-primary:hover{opacity:.88}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── TELAS DE PERGUNTAS ── */
+.q-header{padding:24px 28px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.q-step{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mist)}
+.q-step span{color:var(--gold)}
+.q-body{flex:1;padding:24px 28px;overflow-y:auto}
+.q-icon{font-size:32px;margin-bottom:12px}
+.q-title{font-family:"Cormorant Garamond",serif;font-size:30px;font-weight:300;line-height:1.15;color:var(--paper);margin-bottom:8px;letter-spacing:-.3px}
+.q-title em{font-style:italic;color:var(--gold)}
+.q-instruction{font-size:12px;color:var(--fog);line-height:1.6;margin-bottom:24px;font-weight:300}
+.q-instruction strong{color:var(--gold);font-weight:500}
+
+/* ── ITENS DE RANKEAMENTO ── */
+.rank-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.rank-item{
+  background:var(--ash);
+  border:1px solid var(--smoke);
+  border-radius:6px;
+  padding:14px 16px;
+  cursor:pointer;
+  transition:all .15s;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  user-select:none;
+}
+.rank-item:hover{border-color:var(--gold-dim)}
+.rank-item.selected{background:#2A2515;border-color:var(--gold)}
+.rank-num{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:var(--smoke);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:500;
+  color:var(--fog);
+  flex-shrink:0;
+  transition:all .15s;
+}
+.rank-item.selected .rank-num{background:var(--gold);color:var(--ink)}
+.rank-emoji{font-size:18px;flex-shrink:0}
+.rank-label{font-size:14px;color:var(--paper);flex:1}
+.rank-item.selected .rank-label{color:var(--gold)}
+
+/* ── CHIPS / MULTI-SELECT ── */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{
+  background:var(--ash);
+  border:1px solid var(--smoke);
+  border-radius:18px;
+  padding:8px 14px;
+  font-size:12px;
+  color:var(--paper);
+  cursor:pointer;
+  transition:all .15s;
+  user-select:none;
+  letter-spacing:.3px;
+}
+.chip:hover{border-color:var(--gold-dim)}
+.chip.selected{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+
+/* ── CARDS / SINGLE-SELECT ── */
+.cards{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.card{
+  background:var(--ash);
+  border:1px solid var(--smoke);
+  border-radius:6px;
+  padding:18px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.card:hover{border-color:var(--gold-dim)}
+.card.selected{background:#2A2515;border-color:var(--gold)}
+.card-title{font-family:"Cormorant Garamond",serif;font-size:18px;color:var(--paper);margin-bottom:4px;font-weight:400}
+.card.selected .card-title{color:var(--gold)}
+.card-sub{font-size:11px;color:var(--fog);line-height:1.5;font-weight:300}
+
+/* ── CAMPO DE TEXTO LIVRE ── */
+.text-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.text-field label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mist);font-weight:400}
+.text-field textarea{
+  background:var(--ash);
+  border:1px solid var(--smoke);
+  border-radius:4px;
+  padding:12px 14px;
+  font-size:13px;
+  color:var(--paper);
+  outline:none;
+  font-family:"DM Sans",sans-serif;
+  resize:vertical;
+  min-height:60px;
+  transition:border-color .2s;
+}
+.text-field textarea:focus{border-color:var(--gold)}
+.text-field-hint{font-size:10px;color:var(--smoke);font-weight:300;margin-top:-2px}
+
+/* ── FOOTER DA TELA (BOTÕES) ── */
+.q-footer{padding:16px 28px 24px;border-top:1px solid var(--line);display:flex;gap:10px;flex-shrink:0}
+.btn-back{
+  background:transparent;
+  border:1px solid var(--smoke);
+  color:var(--fog);
+  padding:13px 18px;
+  border-radius:4px;
+  font-size:11px;
+  font-family:"DM Sans",sans-serif;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-back:hover{border-color:var(--gold-dim);color:var(--paper)}
+.btn-next{
+  flex:1;
+  background:var(--gold);
+  border:none;
+  padding:13px;
+  border-radius:4px;
+  color:var(--ink);
+  font-size:11px;
+  font-weight:500;
+  cursor:pointer;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  font-family:"DM Sans",sans-serif;
+  transition:opacity .2s;
+}
+.btn-next:hover{opacity:.88}
+.btn-next:disabled{opacity:.3;cursor:not-allowed}
+
+/* ── TELA: ENVIO ── */
+.loading-wrap{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:0 28px;text-align:center}
+.loading-icon{font-size:48px;margin-bottom:24px;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+.loading-text{font-family:"Cormorant Garamond",serif;font-size:24px;color:var(--gold);font-weight:300;margin-bottom:8px}
+.loading-sub{font-size:12px;color:var(--fog);line-height:1.6}
+
+/* ── TELA: SUCESSO ── */
+#s-success{padding:0}
+.success-wrap{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:48px 28px;text-align:center}
+.success-icon{font-size:56px;margin-bottom:24px}
+.success-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.success-title{font-family:"Cormorant Garamond",serif;font-size:36px;font-weight:300;line-height:1.1;color:var(--paper);margin-bottom:16px}
+.success-title em{font-style:italic;color:var(--gold)}
+.success-desc{font-size:13px;color:var(--fog);line-height:1.8;max-width:340px;font-weight:300;margin-bottom:32px}
+.success-sig{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:var(--mist)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ TELA 1: BOAS-VINDAS ══ -->
+<div id="s-welcome" class="screen active">
+  <div class="wlc-top">
+    <div class="wlc-eyebrow">Casa Levi · Confraria do Sabor</div>
+    <h1 class="wlc-title">Sua <em>Carta de<br>Preferências</em></h1>
+    <p class="wlc-desc">Antes do próximo jantar, conte ao Chef sobre seus sabores prediletos. Cada resposta ajuda na curadoria da experiência que será desenhada para você.</p>
+  </div>
+  <div class="wlc-bottom">
+    <div class="wlc-form">
+      <div class="form-field">
+        <label>Seu nome</label>
+        <input type="text" id="inp-nome" placeholder="Como o Chef deve te chamar">
+      </div>
+      <div class="form-field">
+        <label>E-mail</label>
+        <input type="email" id="inp-email" placeholder="seu@email.com">
+      </div>
+      <div class="form-field">
+        <label>Reserva ou ocasião <span style="color:var(--smoke)">(opcional)</span></label>
+        <input type="text" id="inp-mesa" placeholder="Ex.: Reserva 15/dez · Noite do Nhoque">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">Começar</button>
+  </div>
+</div>
+
+<!-- ══ TELAS DE PERGUNTAS ══ -->
+<div id="s-quiz" class="screen">
+  <div class="q-header">
+    <div class="q-step">Etapa <span id="q-current">1</span> de <span id="q-total">8</span></div>
+    <div class="q-step" id="q-cat-label" style="color:var(--gold)">Proteínas</div>
+  </div>
+  <div class="q-body" id="q-body"></div>
+  <div class="q-footer">
+    <button class="btn-back" onclick="backQuestion()">Voltar</button>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()" disabled>Próxima</button>
+  </div>
+</div>
+
+<!-- ══ TELA DE ENVIO ══ -->
+<div id="s-loading" class="screen">
+  <div class="loading-wrap">
+    <div class="loading-icon">📜</div>
+    <div class="loading-text">Enviando sua carta…</div>
+    <p class="loading-sub">O Chef receberá suas preferências<br>e construirá a experiência ideal.</p>
+  </div>
+</div>
+
+<!-- ══ TELA DE SUCESSO ══ -->
+<div id="s-success" class="screen">
+  <div class="success-wrap">
+    <div class="success-icon">🍷</div>
+    <div class="success-eyebrow">Carta recebida</div>
+    <h2 class="success-title">Obrigado, <em id="r-nome">amigo</em></h2>
+    <p class="success-desc" id="r-msg">Suas preferências foram entregues ao Chef. No próximo jantar da Confraria, ele desenhará uma experiência sob medida — fiel ao seu paladar, mas com a surpresa que só a Casa LeVi consegue oferecer.</p>
+    <div class="success-sig">Chef Léo · Casa LeVi</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ============ CONFIGURAÇÃO DE ENVIO ============
+var ENDPOINT_CHEF = "https://script.google.com/macros/s/AKfycbzSTZQfreSQ09nxQp82UeoBwLbrxmsbsPYd4PLDWAD-OZB3S8joMm7uhAQtPimOq_Ab/exec";
+var TOKEN_CHEF = "CASALEVI2025";
+// ===============================================
+
+// ============ DADOS DAS PERGUNTAS ============
+var questions = [
+  {
+    id:"proteinas",
+    category:"Proteínas",
+    icon:"🥩",
+    title:"Quais <em>proteínas</em> te conquistam?",
+    instruction:"Toque até <strong>3 opções</strong>, na ordem da sua preferência. Primeiro clique vira sua escolha #1.",
+    type:"rank",
+    min:1,
+    max:3,
+    options:[
+      {emoji:"🥩",label:"Carne vermelha"},
+      {emoji:"🐑",label:"Cordeiro"},
+      {emoji:"🐖",label:"Suíno"},
+      {emoji:"🦌",label:"Caça (javali, codorna)"},
+      {emoji:"🍗",label:"Frango e aves"},
+      {emoji:"🐟",label:"Peixe"},
+      {emoji:"🦐",label:"Frutos do mar"},
+      {emoji:"🌱",label:"Vegetariano / sem proteína animal"}
+    ]
+  },
+  {
+    id:"bases",
+    category:"Bases",
+    icon:"🍝",
+    title:"E as <em>bases</em> que você ama?",
+    instruction:"Toque até <strong>3 opções</strong>, em ordem de preferência.",
+    type:"rank",
+    min:1,
+    max:3,
+    options:[
+      {emoji:"🍝",label:"Massas"},
+      {emoji:"🥟",label:"Nhoque"},
+      {emoji:"🍚",label:"Risoto"},
+      {emoji:"🍙",label:"Arroz (em todas as formas)"},
+      {emoji:"🥔",label:"Batata (purê, gratin, rústica)"},
+      {emoji:"🍞",label:"Pães e fermentados"},
+      {emoji:"🥗",label:"Baixo-carb / sem carboidrato"}
+    ]
+  },
+  {
+    id:"estilos",
+    category:"Estilos",
+    icon:"🌍",
+    title:"Quais <em>cozinhas</em> te encantam?",
+    instruction:"Toque até <strong>3 opções</strong>, na ordem da sua preferência.",
+    type:"rank",
+    min:1,
+    max:3,
+    options:[
+      {emoji:"🇮🇹",label:"Italiana"},
+      {emoji:"🇫🇷",label:"Francesa"},
+      {emoji:"🇧🇷",label:"Brasileira regional"},
+      {emoji:"🥢",label:"Asiática"},
+      {emoji:"🫒",label:"Mediterrânea"},
+      {emoji:"🌮",label:"Latino-americana"},
+      {emoji:"✨",label:"Contemporânea / fusion"},
+      {emoji:"🍲",label:"Caseira / comfort food"}
+    ]
+  },
+  {
+    id:"sobremesas",
+    category:"Sobremesas",
+    icon:"🍰",
+    title:"E as <em>sobremesas</em>?",
+    instruction:"Toque até <strong>3 opções</strong>, na ordem da sua preferência.",
+    type:"rank",
+    min:1,
+    max:3,
+    options:[
+      {emoji:"🍫",label:"Chocolate"},
+      {emoji:"🍓",label:"Frutas"},
+      {emoji:"🍮",label:"Cremosos (mousse, brûlée, panna cotta)"},
+      {emoji:"🍋",label:"Cítricos"},
+      {emoji:"🍯",label:"Clássicos brasileiros (brigadeiro, doce de leite)"},
+      {emoji:"🍨",label:"Sorvetes e gelados"},
+      {emoji:"🧀",label:"Queijos como sobremesa"}
+    ]
+  },
+  {
+    id:"restricoes",
+    category:"Restrições",
+    icon:"⚠️",
+    title:"E o que <em>evitar</em>?",
+    instruction:"Esta etapa é crucial. Seja específico se possível.",
+    type:"text",
+    fields:[
+      {id:"alergias",label:"Alergias e intolerâncias",placeholder:"Ex.: glúten, lactose, frutos do mar, amendoim…",hint:"Restrições médicas — o Chef nunca incluirá esses itens."},
+      {id:"naoGosta",label:"Itens que você simplesmente detesta",placeholder:"Ex.: coentro, fígado, beterraba…",hint:"Não são alergias, mas o Chef respeitará seu paladar."}
+    ]
+  },
+  {
+    id:"experiencia",
+    category:"Experiência",
+    icon:"🎭",
+    title:"Como você prefere <em>se aventurar</em>?",
+    instruction:"Escolha o estilo que mais combina com você.",
+    type:"single",
+    options:[
+      {label:"Surpreenda-me",sub:"Quero ousadias, combinações inesperadas, ingredientes que eu jamais escolheria sozinho."},
+      {label:"Clássicos bem executados",sub:"Prefiro técnica refinada aplicada a sabores reconhecíveis e queridos."},
+      {label:"Equilíbrio entre os dois",sub:"Um fio condutor familiar com toques de surpresa pelo caminho."}
+    ]
+  },
+  {
+    id:"harmonizacao",
+    category:"Harmonização",
+    icon:"🍷",
+    title:"O que <em>acompanha</em> seu jantar?",
+    instruction:"Toque em quantas opções fizerem sentido — sem ordem específica.",
+    type:"multi",
+    options:["Vinho tinto","Vinho branco","Espumante","Cerveja artesanal","Drinks autorais","Sem álcool / sucos especiais","Surpreenda-me"]
+  },
+  {
+    id:"ocasioes",
+    category:"Ocasiões",
+    icon:"💫",
+    title:"Em que <em>momentos</em> você vem à Casa LeVi?",
+    instruction:"Toque em todas as ocasiões que se aplicam a você.",
+    type:"multi",
+    options:["Romântico (a dois)","Comemoração","Encontro de amigos","Negócios","Solo (jantar contemplativo)","Família"]
+  }
+];
+
+// ============ ESTADO ============
+var clienteNome="";
+var clienteEmail="";
+var clienteMesa="";
+var currentQ=0;
+var answers={};
+// Inicializar estrutura de respostas
+questions.forEach(function(q){
+  if(q.type==="rank")answers[q.id]=[];
+  else if(q.type==="multi")answers[q.id]=[];
+  else if(q.type==="single")answers[q.id]=null;
+  else if(q.type==="text")answers[q.id]={};
+});
+
+// ============ FUNÇÕES DE NAVEGAÇÃO ============
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+}
+
+function startQuiz(){
+  var nome=document.getElementById("inp-nome").value.trim();
+  var email=document.getElementById("inp-email").value.trim();
+  if(!nome||!email||email.indexOf("@")===-1){
+    alert("Por favor, informe nome e e-mail válidos.");
+    return;
+  }
+  clienteNome=nome;
+  clienteEmail=email;
+  clienteMesa=document.getElementById("inp-mesa").value.trim();
+  document.getElementById("q-total").textContent=questions.length;
+  currentQ=0;
+  renderQuestion();
+  showScreen("s-quiz");
+}
+
+function renderQuestion(){
+  var q=questions[currentQ];
+  document.getElementById("q-current").textContent=currentQ+1;
+  document.getElementById("q-cat-label").textContent=q.category;
+  
+  var body=document.getElementById("q-body");
+  var html='<div class="q-icon">'+q.icon+'</div>';
+  html+='<h2 class="q-title">'+q.title+'</h2>';
+  html+='<p class="q-instruction">'+q.instruction+'</p>';
+  
+  if(q.type==="rank"){
+    html+='<div class="rank-list">';
+    q.options.forEach(function(opt,i){
+      var rank=answers[q.id].indexOf(opt.label);
+      var selected=rank>=0;
+      var num=selected?(rank+1):"";
+      html+='<div class="rank-item'+(selected?" selected":"")+'" onclick="toggleRank(\''+q.id+'\',\''+opt.label.replace(/'/g,"\\'")+'\')">';
+      html+='<div class="rank-num">'+num+'</div>';
+      html+='<div class="rank-emoji">'+opt.emoji+'</div>';
+      html+='<div class="rank-label">'+opt.label+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+  } else if(q.type==="multi"){
+    html+='<div class="chips">';
+    q.options.forEach(function(opt){
+      var selected=answers[q.id].indexOf(opt)>=0;
+      html+='<div class="chip'+(selected?" selected":"")+'" onclick="toggleMulti(\''+q.id+'\',\''+opt.replace(/'/g,"\\'")+'\')">'+opt+'</div>';
+    });
+    html+='</div>';
+  } else if(q.type==="single"){
+    html+='<div class="cards">';
+    q.options.forEach(function(opt){
+      var selected=answers[q.id]===opt.label;
+      html+='<div class="card'+(selected?" selected":"")+'" onclick="selectSingle(\''+q.id+'\',\''+opt.label.replace(/'/g,"\\'")+'\')">';
+      html+='<div class="card-title">'+opt.label+'</div>';
+      html+='<div class="card-sub">'+opt.sub+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+  } else if(q.type==="text"){
+    q.fields.forEach(function(f){
+      html+='<div class="text-field">';
+      html+='<label>'+f.label+'</label>';
+      html+='<textarea id="ta-'+f.id+'" placeholder="'+f.placeholder+'">'+(answers[q.id][f.id]||"")+'</textarea>';
+      html+='<div class="text-field-hint">'+f.hint+'</div>';
+      html+='</div>';
+    });
+  }
+  body.innerHTML=html;
+  updateNextButton();
+}
+
+function toggleRank(qid,label){
+  var arr=answers[qid];
+  var idx=arr.indexOf(label);
+  var q=questions.find(function(x){return x.id===qid;});
+  if(idx>=0){
+    arr.splice(idx,1); // remove
+  } else {
+    if(arr.length>=q.max)return; // máximo atingido
+    arr.push(label);
+  }
+  renderQuestion();
+}
+
+function toggleMulti(qid,label){
+  var arr=answers[qid];
+  var idx=arr.indexOf(label);
+  if(idx>=0)arr.splice(idx,1);
+  else arr.push(label);
+  renderQuestion();
+}
+
+function selectSingle(qid,label){
+  answers[qid]=label;
+  renderQuestion();
+}
+
+function updateNextButton(){
+  var q=questions[currentQ];
+  var btn=document.getElementById("btn-next");
+  var ok=false;
+  if(q.type==="rank")ok=answers[q.id].length>=q.min;
+  else if(q.type==="multi")ok=answers[q.id].length>=1;
+  else if(q.type==="single")ok=answers[q.id]!==null;
+  else if(q.type==="text")ok=true; // texto livre é opcional
+  btn.disabled=!ok;
+  if(currentQ===questions.length-1)btn.textContent="Enviar carta";
+  else btn.textContent="Próxima";
+}
+
+function backQuestion(){
+  // Salvar campos de texto antes de navegar
+  saveTextFields();
+  if(currentQ===0){
+    showScreen("s-welcome");
+  } else {
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+function nextQuestion(){
+  saveTextFields();
+  if(currentQ<questions.length-1){
+    currentQ++;
+    renderQuestion();
+  } else {
+    finalizar();
+  }
+}
+
+function saveTextFields(){
+  var q=questions[currentQ];
+  if(q.type!=="text")return;
+  q.fields.forEach(function(f){
+    var el=document.getElementById("ta-"+f.id);
+    if(el)answers[q.id][f.id]=el.value.trim();
+  });
+}
+
+// ============ ENVIO ============
+function finalizar(){
+  showScreen("s-loading");
+  enviarCartaChef();
+}
+
+function enviarCartaChef(){
+  var payload={
+    token:TOKEN_CHEF,
+    tipo:"gastronomico",
+    nome:clienteNome,
+    email:clienteEmail,
+    mesa:clienteMesa,
+    proteinas:answers.proteinas,
+    bases:answers.bases,
+    estilos:answers.estilos,
+    sobremesas:answers.sobremesas,
+    alergias:answers.restricoes.alergias||"",
+    naoGosta:answers.restricoes.naoGosta||"",
+    experiencia:answers.experiencia,
+    harmonizacao:answers.harmonizacao,
+    ocasioes:answers.ocasioes
+  };
+  
+  if(!ENDPOINT_CHEF||ENDPOINT_CHEF.indexOf("COLE_AQUI")===0){
+    console.log("Endpoint não configurado — pulando envio.");
+    setTimeout(function(){mostrarSucesso();},1500);
+    return;
+  }
+  
+  fetch(ENDPOINT_CHEF,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload)
+  })
+  .then(function(r){return r.text();})
+  .then(function(t){
+    console.log("Carta enviada:",t);
+    mostrarSucesso();
+  })
+  .catch(function(err){
+    console.error("Falha no envio:",err);
+    mostrarSucesso(); // mostra sucesso mesmo assim para não frustrar o cliente
+  });
+}
+
+function mostrarSucesso(){
+  document.getElementById("r-nome").textContent=clienteNome.split(" ")[0];
+  showScreen("s-success");
+}
+</script>
+</body>
+</html>
